@@ -1,5 +1,7 @@
+import Sidebar from "./components/Sidebar"
+
 function App() {
-  return <div className="text-blue-500">Hello World</div>
+  return <Sidebar />
 }
 
 export default App
