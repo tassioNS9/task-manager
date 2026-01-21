@@ -3,6 +3,7 @@ import { Trash2 } from "lucide-react"
 import { CloudSun, Moon, Sun } from "lucide-react"
 
 import Button from "./Button"
+import TaskSepator from "./TaskSepator"
 const Tasks = () => {
   return (
     <div className="w-full px-8 py-16">
@@ -22,19 +23,13 @@ const Tasks = () => {
       </div>
       <div className="flex h-56 flex-col rounded-xl bg-white p-6">
         <div className="space-y-3">
-          <p className="flex items-center gap-2 border-b border-solid border-[#F4F4F5] pb-3 text-[#949C9F]">
-            <Sun /> Manhã
-          </p>
+          <TaskSepator icon={<Sun />} text="Manhã" />
         </div>
         <div className="my-6 space-y-3">
-          <p className="flex items-center gap-2 border-b border-solid border-[#F4F4F5] pb-3 text-[#949C9F]">
-            <CloudSun /> Tarde
-          </p>
+          <TaskSepator icon={<CloudSun />} text="Tarde" />
         </div>
         <div className="space-y-3">
-          <p className="flex items-center gap-2 border-b border-solid border-[#F4F4F5] pb-3 text-[#949C9F]">
-            <Moon /> Noite
-          </p>
+          <TaskSepator icon={<Moon />} text="Noite" />
         </div>
       </div>
     </div>
