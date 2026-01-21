@@ -1,3 +1,5 @@
+import SidebarItem from "./SidebarItem"
+
 const Sidebar = () => {
   return (
     <div className="h-screen w-64 bg-white">
@@ -8,13 +10,13 @@ const Sidebar = () => {
           <span className="text-[#00ADB5]">organizador de tarefas</span>
         </p>
       </div>
-      <div className="flex flex-col px-2">
-        <a className="rounded bg-[#E6F7F8] px-4 py-2 text-[#00ADB5]" href="#">
+      <div className="flex flex-col gap-2 px-2">
+        <SidebarItem variant="selected" href="#">
           Inicio
-        </a>
-        <a className="px-4 py-4" href="#">
-          Minhas Tarefas
-        </a>
+        </SidebarItem>
+        <SidebarItem variant="unselected" href="#">
+          Minhas tarefas
+        </SidebarItem>
       </div>
     </div>
   )
