@@ -1,5 +1,7 @@
-import SidebarItem from "./SidebarItem"
+import { House } from "lucide-react"
+import { ListChecks } from "lucide-react"
 
+import SidebarItem from "./SidebarItem"
 const Sidebar = () => {
   return (
     <div className="h-screen w-64 bg-white">
@@ -12,9 +14,11 @@ const Sidebar = () => {
       </div>
       <div className="flex flex-col gap-2 px-2">
         <SidebarItem variant="selected" href="#">
+          <House />
           Inicio
         </SidebarItem>
         <SidebarItem variant="unselected" href="#">
+          <ListChecks />
           Minhas tarefas
         </SidebarItem>
       </div>

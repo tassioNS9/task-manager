@@ -9,7 +9,7 @@ const SidebarItem = ({ children, variant, href }) => {
   }
   return (
     <a
-      className={`rounded px-4 py-2 hover:bg-[#E6F7F8] ${getVariantClasses()}`}
+      className={`flex items-center gap-2 rounded px-4 py-2 hover:bg-[#E6F7F8] ${getVariantClasses()}`}
       href={href}
     >
       {children}
