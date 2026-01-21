@@ -1,0 +1,37 @@
+export const TASKS = [
+  {
+    id: 1,
+    title: "Estudar o FSC",
+    time: "morning",
+    description: "Estudar Para Provar",
+    status: "in_progress",
+  },
+  {
+    id: 2,
+    title: "Ler Livro",
+    time: "morning",
+    description: "#SOU1%",
+    status: "not_started",
+  },
+  {
+    id: 3,
+    title: "Fazer compras",
+    time: "morning",
+    description: "vamos as compras!",
+    status: "done",
+  },
+  {
+    id: 4,
+    title: "Treinar",
+    time: "afternoon",
+    description: "Bora Crescer!",
+    status: "not_started",
+  },
+  {
+    id: 5,
+    title: "Descançar",
+    time: "evening",
+    description: "Hora do descanço",
+    status: "not_started",
+  },
+]
