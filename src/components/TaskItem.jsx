@@ -1,6 +1,13 @@
-import { CheckIcon, Loader2Icon, SquareArrowOutUpRight } from "lucide-react"
+import {
+  CheckIcon,
+  Loader2Icon,
+  SquareArrowOutUpRight,
+  Trash2,
+} from "lucide-react"
 
-const TaskItem = ({ task, handleTaskCheckboxClick }) => {
+import Button from "./Button"
+
+const TaskItem = ({ task, handleTaskCheckboxClick, handleDeleteTask }) => {
   const getStatusClasses = () => {
     if (task.status === "done") {
       return "bg-[#00ADB5]   text-[#00ADB5]"
@@ -33,10 +40,16 @@ const TaskItem = ({ task, handleTaskCheckboxClick }) => {
         </label>
         <p className="">{task.title}</p>
       </div>
-      <a href="#" className="text-[#9599a1] transition hover:opacity-75">
-        {" "}
-        <SquareArrowOutUpRight />
-      </a>
+      <div className="flex items-center">
+        <Button onClick={() => handleDeleteTask(task.id)} variant="ghost">
+          <Trash2 />
+        </Button>
+
+        <a href="#" className="text-[#9599a1] transition hover:opacity-75">
+          {" "}
+          <SquareArrowOutUpRight />
+        </a>
+      </div>
     </div>
   )
 }
