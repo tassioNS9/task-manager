@@ -2,6 +2,7 @@ import { PlusIcon } from "lucide-react"
 import { Trash2 } from "lucide-react"
 import { CloudSun, Moon, Sun } from "lucide-react"
 import { useState } from "react"
+import { toast } from "sonner"
 
 import Button from "./Button"
 import { TASKS } from "./constants/tasks"
@@ -41,6 +42,7 @@ const Tasks = () => {
     const newTasks = tasks.filter((task) => task.id !== taskId)
 
     setTasks(newTasks)
+    toast.success("Tarefa Deletada com Sucesso!")
   }
   return (
     <div className="w-full space-y-2 px-8 py-16">
