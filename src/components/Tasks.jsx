@@ -8,7 +8,7 @@ import { TASKS } from "./constants/tasks"
 import TaskItem from "./TaskItem"
 import TaskSepator from "./TaskSepator"
 const Tasks = () => {
-  const [tasks, setTasks] = useState(TASKS)
+  const [tasks] = useState(TASKS)
 
   const tasksMorning = tasks.filter((task) => task.time === "morning")
   const taskAfternoon = tasks.filter((task) => task.time === "afternoon")
@@ -33,14 +33,20 @@ const Tasks = () => {
         <div className="space-y-3">
           <TaskSepator icon={<Sun />} text="Manhã" />
           {tasksMorning.map((task) => (
-            <TaskItem id={task.id} task={task} />
+            <TaskItem key={task.id} task={task} />
           ))}
         </div>
         <div className="my-6 space-y-3">
           <TaskSepator icon={<CloudSun />} text="Tarde" />
+          {taskAfternoon.map((task) => (
+            <TaskItem key={task.id} task={task} />
+          ))}
         </div>
         <div className="space-y-3">
           <TaskSepator icon={<Moon />} text="Noite" />
+          {tasksEvening.map((task) => (
+            <TaskItem key={task.id} task={task} />
+          ))}
         </div>
       </div>
     </div>

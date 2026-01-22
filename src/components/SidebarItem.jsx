@@ -1,3 +1,4 @@
+// eslint-disable-next-line react/prop-types
 const SidebarItem = ({ children, variant, href }) => {
   const getVariantClasses = () => {
     if (variant === "unselected") {
