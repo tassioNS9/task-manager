@@ -4,12 +4,14 @@ import { CloudSun, Moon, Sun } from "lucide-react"
 import { useState } from "react"
 import { toast } from "sonner"
 
+import AddTaskDialog from "./AddTaskDialog"
 import Button from "./Button"
 import { TASKS } from "./constants/tasks"
 import TaskItem from "./TaskItem"
 import TaskSepator from "./TaskSepator"
 const Tasks = () => {
   const [tasks, setTasks] = useState(TASKS)
+  const [addTaskDialogIsOpen, setAddTaskDialogIsOpen] = useState(false)
 
   const tasksMorning = tasks.filter((task) => task.time === "morning")
   const taskAfternoon = tasks.filter((task) => task.time === "afternoon")
@@ -55,9 +57,11 @@ const Tasks = () => {
           <Button variant="ghost">
             Limpar tarefas <Trash2 />
           </Button>
-          <Button>
+          <Button onClick={() => setAddTaskDialogIsOpen(true)}>
             Nova Tarefa <PlusIcon />
           </Button>
+
+          <AddTaskDialog isOpen={addTaskDialogIsOpen} />
         </div>
       </div>
       <div className="flex flex-col rounded-xl bg-white p-6">
