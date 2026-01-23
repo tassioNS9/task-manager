@@ -1,14 +1,29 @@
 import "./AddTaskDialog.css"
 
-import { useRef } from "react"
+import { useRef, useState } from "react"
 import { createPortal } from "react-dom"
 import { CSSTransition } from "react-transition-group"
+import { v4 } from "uuid"
 
 import Button from "./Button"
 import Input from "./Input"
 import TimeSelect from "./TimeSelect"
-const AddTaskDialog = ({ isOpen, handleClose }) => {
+const AddTaskDialog = ({ isOpen, handleClose, handleSubmit }) => {
+  const [time, setTime] = useState("evening")
+  const [title, setTitle] = useState("evening")
+  const [description, setDescription] = useState("morning")
   const nodeRef = useRef()
+
+  const handleSaveClick = () => {
+    handleSubmit({
+      id: v4(),
+      title,
+      description,
+      time,
+      status: "not_started",
+    })
+    handleClose()
+  }
   return (
     <CSSTransition
       nodeRef={nodeRef}
@@ -37,12 +52,19 @@ const AddTaskDialog = ({ isOpen, handleClose }) => {
                   id="title"
                   label="Título"
                   placeholder="Insira o título da tarefa"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
                 />
-                <TimeSelect />
+                <TimeSelect
+                  value={time}
+                  onChange={(e) => setTime(e.target.value)}
+                />
                 <Input
                   id="description"
                   label="Descrição"
                   placeholder="Descreva a Tarefa"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
                 />
 
                 <div className="flex justify-center gap-4">
@@ -54,7 +76,11 @@ const AddTaskDialog = ({ isOpen, handleClose }) => {
                   >
                     Cancelar
                   </Button>
-                  <Button className="w-full justify-center" size="large">
+                  <Button
+                    className="w-full justify-center"
+                    size="large"
+                    onClick={handleSaveClick}
+                  >
                     Adicionar
                   </Button>
                 </div>
