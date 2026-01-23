@@ -61,7 +61,10 @@ const Tasks = () => {
             Nova Tarefa <PlusIcon />
           </Button>
 
-          <AddTaskDialog isOpen={addTaskDialogIsOpen} />
+          <AddTaskDialog
+            isOpen={addTaskDialogIsOpen}
+            handleClose={() => setAddTaskDialogIsOpen(false)}
+          />
         </div>
       </div>
       <div className="flex flex-col rounded-xl bg-white p-6">
