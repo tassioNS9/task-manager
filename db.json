@@ -1,13 +1,6 @@
 {
   "tasks": [
     {
-      "id": "1",
-      "title": "Estudar o FSC",
-      "time": "morning",
-      "description": "Estudar Para Provar",
-      "status": "in_progress"
-    },
-    {
       "id": "2",
       "title": "Ler Livro",
       "time": "morning",
