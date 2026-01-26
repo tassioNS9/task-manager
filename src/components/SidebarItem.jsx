@@ -1,5 +1,5 @@
+import PropTypes from "prop-types"
 import { tv } from "tailwind-variants"
-
 const SidebarItem = ({ children, color, href }) => {
   const sidebar = tv({
     base: `hover:text-brand-primary flex items-center gap-2 rounded px-4 py-2 hover:bg-opacity-15`,
@@ -19,6 +19,12 @@ const SidebarItem = ({ children, color, href }) => {
       {children}
     </a>
   )
+}
+
+SidebarItem.propTypes = {
+  children: PropTypes.node.isRequired,
+  color: PropTypes.oneOf(["selected", "unselected"]),
+  href: PropTypes.string.isRequired,
 }
 
 export default SidebarItem
