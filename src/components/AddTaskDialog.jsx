@@ -111,9 +111,9 @@ const AddTaskDialog = ({ isOpen, handleClose, handleSubmit }) => {
 
                 <div className="flex justify-center gap-4">
                   <Button
+                    color="secondary"
                     className="w-full justify-center"
                     size="large"
-                    variant="secondary"
                     onClick={handleClose}
                   >
                     Cancelar
