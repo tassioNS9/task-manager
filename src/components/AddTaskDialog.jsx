@@ -10,21 +10,23 @@ import Input from "./Input"
 import TimeSelect from "./TimeSelect"
 const AddTaskDialog = ({ isOpen, handleClose, handleSubmit }) => {
   const [time, setTime] = useState("evening")
-  const [title, setTitle] = useState("")
-  const [description, setDescription] = useState("")
   const [errors, setErrors] = useState([])
   const nodeRef = useRef()
+  const titleRef = useRef()
+  const descriptionRef = useRef()
 
   useEffect(() => {
     if (!isOpen) {
-      setTime("")
-      setDescription("")
       setTime("morning")
     }
   }, [isOpen])
 
   const handleSaveClick = () => {
     const newErrors = []
+    const title = titleRef?.current.value
+    const description = descriptionRef?.current.value
+
+    // Nova Verificação utilizando o Ref
     if (!title.trim()) {
       newErrors.push({
         inputName: "title",
@@ -90,9 +92,8 @@ const AddTaskDialog = ({ isOpen, handleClose, handleSubmit }) => {
                   id="title"
                   label="Título"
                   placeholder="Insira o título da tarefa"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
                   errorMessage={titleError?.message}
+                  ref={titleRef}
                 />
                 <TimeSelect
                   value={time}
@@ -104,9 +105,8 @@ const AddTaskDialog = ({ isOpen, handleClose, handleSubmit }) => {
                   id="description"
                   label="Descrição"
                   placeholder="Descreva a Tarefa"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
                   errorMessage={descriptionError?.message}
+                  ref={descriptionRef}
                 />
 
                 <div className="flex justify-center gap-4">
