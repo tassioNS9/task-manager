@@ -1,21 +1,32 @@
 import { PlusIcon } from "lucide-react"
 import { Trash2 } from "lucide-react"
 import { CloudSun, Moon, Sun } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { toast } from "sonner"
 
 import AddTaskDialog from "./AddTaskDialog"
 import Button from "./Button"
-import { TASKS } from "./constants/tasks"
 import TaskItem from "./TaskItem"
 import TaskSepator from "./TaskSepator"
 const Tasks = () => {
-  const [tasks, setTasks] = useState(TASKS)
+  const [tasks, setTasks] = useState([])
   const [addTaskDialogIsOpen, setAddTaskDialogIsOpen] = useState(false)
 
   const tasksMorning = tasks.filter((task) => task.time === "morning")
   const taskAfternoon = tasks.filter((task) => task.time === "afternoon")
   const tasksEvening = tasks.filter((task) => task.time === "evening")
+
+  useEffect(() => {
+    const getTasks = async () => {
+      const response = await fetch("http://localhost:3000/tasks", {
+        method: "GET",
+      })
+      const data = await response.json()
+      console.log({ data })
+      setTasks(data)
+    }
+    getTasks()
+  }, [])
 
   const handleTaskCheckboxClick = (taskId) => {
     const newTasks = tasks.map((task) => {
@@ -40,7 +51,18 @@ const Tasks = () => {
     setTasks(newTasks)
   }
 
-  const handleAddTask = (newTask) => {
+  const handleAddTask = async (newTask) => {
+    const response = await fetch("http://localhost:3000/tasks", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newTask),
+    })
+
+    if (!response.ok) {
+      return toast.error("Erro ao adicionar tarefa.")
+    }
     setTasks([...tasks, newTask])
     toast.success("Tarefa Criada com Sucesso!")
   }
@@ -55,7 +77,7 @@ const Tasks = () => {
     <div className="w-full space-y-2 px-8 py-16">
       <div className="flex items-center justify-between">
         <div className="flex flex-col gap-2 p-3 px-2">
-          <span className="text-brand-primary text-xs">Minhas Tarefas</span>
+          <span className="text-xs text-brand-primary">Minhas Tarefas</span>
           <h2 className="tex-brand-dark-blue text-xl font-bold">
             Minhas Tarefas
           </h2>

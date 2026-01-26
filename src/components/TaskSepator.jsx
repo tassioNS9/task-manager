@@ -2,7 +2,7 @@ import PropTypes from "prop-types"
 
 const TaskSepator = ({ icon, title }) => {
   return (
-    <div className="border-brand-border flex items-center gap-2 border-b border-solid pb-4 text-[#949C9F]">
+    <div className="border-brand-border text-brand-text-gray flex items-center gap-2 border-b border-solid pb-4">
       {icon}
       <p className="text-sm">{title}</p>
     </div>
