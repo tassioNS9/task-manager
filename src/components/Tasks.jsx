@@ -77,7 +77,7 @@ const Tasks = () => {
       </div>
       <div className="flex flex-col rounded-xl bg-white p-6">
         <div className="space-y-3">
-          <TaskSepator icon={<Sun />} text="Manhã" />
+          <TaskSepator icon={<Sun />} title="Manhã" />
           {tasksMorning.map((task) => (
             <TaskItem
               key={task.id}
@@ -88,7 +88,7 @@ const Tasks = () => {
           ))}
         </div>
         <div className="my-6 space-y-3">
-          <TaskSepator icon={<CloudSun />} text="Tarde" />
+          <TaskSepator icon={<CloudSun />} title="Tarde" />
           {taskAfternoon.map((task) => (
             <TaskItem
               key={task.id}
@@ -99,7 +99,7 @@ const Tasks = () => {
           ))}
         </div>
         <div className="space-y-3">
-          <TaskSepator icon={<Moon />} text="Noite" />
+          <TaskSepator icon={<Moon />} title="Noite" />
           {tasksEvening.map((task) => (
             <TaskItem
               key={task.id}
