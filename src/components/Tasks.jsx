@@ -55,8 +55,10 @@ const Tasks = () => {
     <div className="w-full space-y-2 px-8 py-16">
       <div className="flex items-center justify-between">
         <div className="flex flex-col gap-2 p-3 px-2">
-          <span className="text-xs text-[#00ADB5]">Minhas Tarefas</span>
-          <h2 className="tex-[#35383E] text-xl font-bold">Minhas Tarefas</h2>
+          <span className="text-brand-primary text-xs">Minhas Tarefas</span>
+          <h2 className="tex-brand-dark-blue text-xl font-bold">
+            Minhas Tarefas
+          </h2>
         </div>
         <div className="flex items-center gap-4">
           <Button variant="ghost">

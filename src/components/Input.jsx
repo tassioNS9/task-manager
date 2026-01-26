@@ -8,7 +8,7 @@ const Input = forwardRef(({ label, errorMessage, ...rest }, ref) => {
       <InputLabel htmlFor={rest.id}>{label}</InputLabel>
       <input
         ref={ref}
-        className="border-brand-border outline-brand-primary rounded-lg border border-solid px-4 py-3 outline-[#00ADB5] placeholder:text-sm placeholder:text-[#9A9C9F]"
+        className="border-brand-border outline-brand-primary outline-text-brand-primary placeholder:text-brand-text-gray rounded-lg border border-solid px-4 py-3 placeholder:text-sm"
         {...rest}
       />
       {errorMessage && <InputErrorMessage>{errorMessage}</InputErrorMessage>}
