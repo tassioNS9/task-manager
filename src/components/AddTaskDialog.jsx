@@ -114,11 +114,13 @@ const AddTaskDialog = ({ isOpen, handleClose, onAddTaskSucess }) => {
                   placeholder="Insira o título da tarefa"
                   errorMessage={titleError?.message}
                   ref={titleRef}
+                  disabled={isLoading}
                 />
                 <TimeSelect
                   value={time}
                   onChange={(e) => setTime(e.target.value)}
                   errorMessage={timeError?.message}
+                  disabled={isLoading}
                 />
 
                 <Input
@@ -127,6 +129,7 @@ const AddTaskDialog = ({ isOpen, handleClose, onAddTaskSucess }) => {
                   placeholder="Descreva a Tarefa"
                   errorMessage={descriptionError?.message}
                   ref={descriptionRef}
+                  disabled={isLoading}
                 />
 
                 <div className="flex justify-center gap-4">
