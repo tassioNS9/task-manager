@@ -5,10 +5,29 @@ import {
   Trash2,
 } from "lucide-react"
 import PropTypes from "prop-types"
+import { useState } from "react"
+import { toast } from "sonner"
 
 import Button from "./Button"
 
-const TaskItem = ({ task, handleTaskCheckboxClick, handleDeleteTask }) => {
+const TaskItem = ({ task, handleTaskCheckboxClick, onDeleteSucess }) => {
+  const [deleteIsLoading, setDeleteIsLoading] = useState(false)
+
+  const handleDeleteClick = async () => {
+    setDeleteIsLoading(true)
+    const response = await fetch(`http://localhost:3000/tasks/${task.id}`, {
+      method: "DELETE",
+    })
+    if (!response.ok) {
+      setDeleteIsLoading(false)
+      return toast.error("Erro ao Deletar a tarefa!.")
+    }
+
+    toast.success("Tarefa Deletada com Sucesso!")
+    onDeleteSucess(task.id)
+    setDeleteIsLoading(false)
+  }
+
   const getStatusClasses = () => {
     if (task.status === "done") {
       return "bg-brand-primary text-brand-primary"
@@ -42,8 +61,16 @@ const TaskItem = ({ task, handleTaskCheckboxClick, handleDeleteTask }) => {
         <p className="">{task.title}</p>
       </div>
       <div className="flex items-center">
-        <Button onClick={() => handleDeleteTask(task.id)} color="ghost">
-          <Trash2 />
+        <Button
+          onClick={handleDeleteClick}
+          color="ghost"
+          disabled={deleteIsLoading}
+        >
+          {deleteIsLoading ? (
+            <Loader2Icon className="animate-spin text-brand-text-gray" />
+          ) : (
+            <Trash2 />
+          )}
         </Button>
 
         <a href="#" className="text-[#9599A1] transition hover:opacity-75">
