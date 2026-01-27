@@ -1,17 +1,20 @@
 import "./AddTaskDialog.css"
 
+import { Loader2Icon } from "lucide-react"
 import PropTypes from "prop-types"
 import { useEffect, useRef, useState } from "react"
 import { createPortal } from "react-dom"
 import { CSSTransition } from "react-transition-group"
+import { toast } from "sonner"
 import { v4 } from "uuid"
 
 import Button from "./Button"
 import Input from "./Input"
 import TimeSelect from "./TimeSelect"
-const AddTaskDialog = ({ isOpen, handleClose, handleSubmit }) => {
+const AddTaskDialog = ({ isOpen, handleClose, onAddTaskSucess }) => {
   const [time, setTime] = useState("evening")
   const [errors, setErrors] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
   const nodeRef = useRef()
   const titleRef = useRef()
   const descriptionRef = useRef()
@@ -22,7 +25,7 @@ const AddTaskDialog = ({ isOpen, handleClose, handleSubmit }) => {
     }
   }, [isOpen])
 
-  const handleSaveClick = () => {
+  const handleSaveClick = async () => {
     const newErrors = []
     const title = titleRef?.current.value
     const description = descriptionRef?.current.value
@@ -50,13 +53,29 @@ const AddTaskDialog = ({ isOpen, handleClose, handleSubmit }) => {
 
     if (newErrors.length > 0) return
 
-    handleSubmit({
+    const task = {
       id: v4(),
       title,
       description,
       time,
       status: "not_started",
+    }
+
+    setIsLoading(true)
+    const response = await fetch("http://localhost:3000/tasks", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(task),
     })
+    console.log(response, "fjdkfd")
+
+    if (!response.ok) {
+      return toast.error("Erro ao adicionar tarefa.")
+    }
+    onAddTaskSucess(task)
+    setIsLoading(false)
     handleClose()
   }
 
@@ -84,7 +103,7 @@ const AddTaskDialog = ({ isOpen, handleClose, handleSubmit }) => {
               <h2 className="brand-dark-blue text-xl font-semibold">
                 Nova Tarefa
               </h2>
-              <p className="text-brand-text-gray mb-1 mt-1 text-sm">
+              <p className="mb-1 mt-1 text-sm text-brand-text-gray">
                 Insira as informações abaixo
               </p>
 
@@ -119,13 +138,18 @@ const AddTaskDialog = ({ isOpen, handleClose, handleSubmit }) => {
                   >
                     Cancelar
                   </Button>
-                  <Button
-                    className="w-full justify-center"
-                    size="large"
-                    onClick={handleSaveClick}
-                  >
-                    Adicionar
-                  </Button>
+                  {isLoading ? (
+                    <Loader2Icon className="animate-spin text-brand-text-gray" />
+                  ) : (
+                    <Button
+                      className="w-full justify-center"
+                      size="large"
+                      onClick={handleSaveClick}
+                      disabled={isLoading}
+                    >
+                      Adicionar
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>
@@ -140,7 +164,7 @@ const AddTaskDialog = ({ isOpen, handleClose, handleSubmit }) => {
 AddTaskDialog.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
-  handleSubmit: PropTypes.func.isRequired,
+  onAddTaskSucess: PropTypes.func.isRequired,
 }
 
 export default AddTaskDialog

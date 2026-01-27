@@ -12,7 +12,7 @@ const Button = ({
     variants: {
       color: {
         primary: "bg-brand-primary text-white",
-        ghost: "text-brand-dark-gray bg-transparent",
+        ghost: "bg-transparent text-brand-dark-gray",
         secondary: "bg-brand-light-gray text-brand-dark-blue",
         danger: "bg-brand-danger text-brand-white",
       },
@@ -31,7 +31,10 @@ const Button = ({
   })
 
   return (
-    <button {...rest} className={button({ color, size, className })}>
+    <button
+      {...rest}
+      className={button({ color, size, disabled: rest.disabled, className })}
+    >
       {children}
     </button>
   )
