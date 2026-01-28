@@ -1,7 +1,8 @@
 import { CircleArrowLeft, Loader2Icon, Trash2 } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import { Link, useParams } from "react-router-dom"
-import { toast, Toaster } from "sonner"
+import { useNavigate } from "react-router-dom"
+import { toast } from "sonner"
 
 import Button from "./components/Button"
 import Input from "./components/Input"
@@ -15,7 +16,7 @@ const TaskDetailsPage = () => {
   const [isLoading, setIsLoading] = useState(false)
   const titleRef = useRef()
   const descriptionRef = useRef()
-
+  const navigate = useNavigate()
   useEffect(() => {
     const getTask = async () => {
       const response = await fetch(`http://localhost:3000/tasks/${taskId}`, {
@@ -23,6 +24,7 @@ const TaskDetailsPage = () => {
       })
       const data = await response.json()
       setTask(data)
+      setTime(data.time)
     }
     getTask()
   }, [taskId])
@@ -32,7 +34,6 @@ const TaskDetailsPage = () => {
     // Lógica para salvar as alterações da tarefa
     const title = titleRef?.current.value
     const description = descriptionRef?.current.value
-
     // Nova Verificação utilizando o Ref
     const newErrors = []
     if (!title.trim()) {
@@ -62,6 +63,7 @@ const TaskDetailsPage = () => {
       description,
       time,
     }
+    console.log(task, "task")
     const response = await fetch(`http://localhost:3000/tasks/${taskId}`, {
       method: "PATCH",
       headers: {
@@ -81,6 +83,22 @@ const TaskDetailsPage = () => {
     toast.success("Tarefa atualizada com sucesso!")
   }
 
+  const handleDeleteClick = async () => {
+    setIsLoading(true)
+    const response = await fetch(`http://localhost:3000/tasks/${taskId}`, {
+      method: "DELETE",
+    })
+    if (!response.ok) {
+      setIsLoading(false)
+      return toast.error("Erro ao Deletar a tarefa!.")
+    }
+
+    toast.success("Tarefa Deletada com Sucesso!")
+    setIsLoading(false)
+    navigate("/")
+    // Redirecionar para a página principal ou outra página
+  }
+
   const titleError = errors.find((error) => error.inputName === "title")
   const timeError = errors.find((error) => error.inputName === "time")
   const descriptionError = errors.find(
@@ -89,13 +107,6 @@ const TaskDetailsPage = () => {
 
   return (
     <div className="flex">
-      <Toaster
-        toastOptions={{
-          style: {
-            color: "blue",
-          },
-        }}
-      />
       <Sidebar />
       <div className="w-full space-y-2 px-8 py-16">
         <div className="flex items-center justify-between">
@@ -116,7 +127,11 @@ const TaskDetailsPage = () => {
             </h2>
           </div>
           <div className="flex items-center gap-4 self-end py-3">
-            <Button disabled={isLoading} color="danger">
+            <Button
+              disabled={isLoading}
+              onClick={handleDeleteClick}
+              color="danger"
+            >
               Deletar Tarefa <Trash2 />
             </Button>
           </div>
@@ -133,7 +148,9 @@ const TaskDetailsPage = () => {
           </div>
           <div className="my-6 space-y-3">
             <TimeSelect
-              defaultValue={task?.time}
+              id="time"
+              label="Horário"
+              value={time}
               onChange={(e) => setTime(e.target.value)}
               errorMessage={timeError?.message}
             />

@@ -7,7 +7,7 @@ const TimeSelect = (props) => {
 
       <select
         id="time"
-        className="outline-text-brand-primary placeholder:text-brand-primary border-brand-border rounded-lg border border-solid px-4 py-3 placeholder:text-sm"
+        className="outline-text-brand-primary rounded-lg border border-solid border-brand-border px-4 py-3 placeholder:text-sm placeholder:text-brand-primary"
         {...props}
       >
         <option value="morning">Manhã</option>
