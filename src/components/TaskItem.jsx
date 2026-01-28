@@ -6,6 +6,7 @@ import {
 } from "lucide-react"
 import PropTypes from "prop-types"
 import { useState } from "react"
+import { Link } from "react-router-dom"
 import { toast } from "sonner"
 
 import Button from "./Button"
@@ -73,10 +74,13 @@ const TaskItem = ({ task, handleTaskCheckboxClick, onDeleteSucess }) => {
           )}
         </Button>
 
-        <a href="#" className="text-[#9599A1] transition hover:opacity-75">
+        <Link
+          to={`/tasks/${task.id}`}
+          className="text-[#9599A1] transition hover:opacity-75"
+        >
           {" "}
           <SquareArrowOutUpRight />
-        </a>
+        </Link>
       </div>
     </div>
   )
