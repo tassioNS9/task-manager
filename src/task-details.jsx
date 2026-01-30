@@ -1,5 +1,6 @@
 import { CircleArrowLeft, Loader2Icon, Trash2 } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
+import { useForm } from "react-hook-form"
 import { Link, useParams } from "react-router-dom"
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
@@ -12,11 +13,15 @@ const TaskDetailsPage = () => {
   const { taskId } = useParams()
   const [task, setTask] = useState({})
   const [time, setTime] = useState("")
-  const [errors, setErrors] = useState([])
-  const [isLoading, setIsLoading] = useState(false)
   const titleRef = useRef()
   const descriptionRef = useRef()
   const navigate = useNavigate()
+  const {
+    register,
+    formState: { errors, isSubmitting },
+    handleSubmit,
+  } = useForm()
+
   useEffect(() => {
     const getTask = async () => {
       const response = await fetch(`http://localhost:3000/tasks/${taskId}`, {
@@ -29,34 +34,10 @@ const TaskDetailsPage = () => {
     getTask()
   }, [taskId])
 
-  const handleEditClick = async () => {
-    setIsLoading(true)
+  const handleEditClick = async (data) => {
     // Lógica para salvar as alterações da tarefa
-    const title = titleRef?.current.value
-    const description = descriptionRef?.current.value
-    // Nova Verificação utilizando o Ref
-    const newErrors = []
-    if (!title.trim()) {
-      newErrors.push({
-        inputName: "title",
-        message: "O campo Titulo é Obrigátorio!",
-      })
-    }
-    if (!time.trim()) {
-      newErrors.push({
-        inputName: "time",
-        message: "O campo de Horario é Obrigátorio!",
-      })
-    }
-    if (!description.trim()) {
-      newErrors.push({
-        inputName: "description",
-        message: "O campo Descrição é Obrigátorio!",
-      })
-    }
-    setErrors(newErrors)
-
-    if (newErrors.length > 0) return setIsLoading(false)
+    const title = data.title
+    const description = data.description
 
     const task = {
       title,
@@ -76,7 +57,6 @@ const TaskDetailsPage = () => {
       // Tratar erro
       return toast.error("Erro ao atualizar a tarefa.")
     }
-    setIsLoading(false)
     const updatedTask = await response.json()
     setTask(updatedTask)
     // Talvez mostrar uma notificação de sucesso
@@ -84,26 +64,17 @@ const TaskDetailsPage = () => {
   }
 
   const handleDeleteClick = async () => {
-    setIsLoading(true)
     const response = await fetch(`http://localhost:3000/tasks/${taskId}`, {
       method: "DELETE",
     })
     if (!response.ok) {
-      setIsLoading(false)
       return toast.error("Erro ao Deletar a tarefa!.")
     }
 
     toast.success("Tarefa Deletada com Sucesso!")
-    setIsLoading(false)
     navigate("/")
     // Redirecionar para a página principal ou outra página
   }
-
-  const titleError = errors.find((error) => error.inputName === "title")
-  const timeError = errors.find((error) => error.inputName === "time")
-  const descriptionError = errors.find(
-    (error) => error.inputName === "description"
-  )
 
   return (
     <div className="flex">
@@ -128,7 +99,7 @@ const TaskDetailsPage = () => {
           </div>
           <div className="flex items-center gap-4 self-end py-3">
             <Button
-              disabled={isLoading}
+              disabled={isSubmitting}
               onClick={handleDeleteClick}
               color="danger"
             >
@@ -136,50 +107,65 @@ const TaskDetailsPage = () => {
             </Button>
           </div>
         </div>
-        <div className="flex flex-col rounded-xl bg-white p-6">
-          <div className="space-y-3">
-            <Input
-              id="title"
-              label="Título"
-              ref={titleRef}
-              defaultValue={task?.title}
-              errorMessage={titleError?.message}
-            />
+        <form onSubmit={handleSubmit(handleEditClick)} action="">
+          <div className="flex flex-col rounded-xl bg-white p-6">
+            <div className="space-y-3">
+              <Input
+                id="title"
+                label="Título"
+                ref={titleRef}
+                defaultValue={task?.title}
+                {...register("title", {
+                  required: "Título é obrigatório",
+                  min: {
+                    value: 3,
+                    message: "Título deve ter no mínimo 3 caracteres",
+                  },
+                })}
+                errorMessage={errors.title?.message}
+              />
+            </div>
+            <div className="my-6 space-y-3">
+              <TimeSelect
+                id="time"
+                label="Horário"
+                value={time}
+                onChange={(e) => setTime(e.target.value)}
+              />
+            </div>
+            <div className="space-y-3">
+              <Input
+                id="description"
+                label="Descrição"
+                defaultValue={task?.description}
+                ref={descriptionRef}
+                {...register("description", {
+                  required: "Descrição é obrigatório",
+                  min: {
+                    value: 3,
+                    message: "Descrição deve ter no mínimo 3 caracteres",
+                  },
+                })}
+                errorMessage={errors.description?.message}
+              />
+            </div>
           </div>
-          <div className="my-6 space-y-3">
-            <TimeSelect
-              id="time"
-              label="Horário"
-              value={time}
-              onChange={(e) => setTime(e.target.value)}
-              errorMessage={timeError?.message}
-            />
-          </div>
-          <div className="space-y-3">
-            <Input
-              id="description"
-              label="Descrição"
-              defaultValue={task?.description}
-              ref={descriptionRef}
-              errorMessage={descriptionError?.message}
-            />
-          </div>
-        </div>
 
-        <div className="flex justify-end gap-3 py-3">
-          <Button
-            disabled={isLoading}
-            onClick={handleEditClick}
-            size="large"
-            color="primary"
-          >
-            {isLoading ? (
-              <Loader2Icon className="animate-spin text-brand-text-gray" />
-            ) : (
-              "Salvar"
-            )}
-          </Button>
-        </div>
+          <div className="flex justify-end gap-3 py-3">
+            <Button
+              disabled={isSubmitting}
+              type="submit"
+              size="large"
+              color="primary"
+            >
+              {isSubmitting ? (
+                <Loader2Icon className="animate-spin text-brand-text-gray" />
+              ) : (
+                "Salvar"
+              )}
+            </Button>
+          </div>
+        </form>
       </div>
     </div>
   )

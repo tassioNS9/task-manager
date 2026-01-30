@@ -1,31 +1,10 @@
 {
   "tasks": [
     {
-      "id": "4",
-      "title": "Treinar",
-      "time": "evening",
-      "description": "Bora Crescer!",
-      "status": "not_started"
-    },
-    {
-      "id": "5",
-      "title": "Descançar",
-      "time": "evening",
-      "description": "Hora do descanço",
-      "status": "not_started"
-    },
-    {
-      "id": "1e4d2ba4-f3a6-4cab-9df1-247a6b4811e7",
-      "title": "fsfsf",
-      "description": "dcwewf",
-      "time": "evening",
-      "status": "not_started"
-    },
-    {
-      "id": "55c65f41-fef8-4e13-9eb9-10ecce8e3f91",
-      "title": "fdwefdw2",
-      "description": "43ff3f",
-      "time": "evening",
+      "id": "1c59e1e6-f683-443f-8e5f-dd05abc79962",
+      "title": "dwefwef",
+      "description": "fcwefw",
+      "time": "morning",
       "status": "not_started"
     }
   ]
