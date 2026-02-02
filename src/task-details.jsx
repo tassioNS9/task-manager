@@ -1,5 +1,5 @@
 import { CircleArrowLeft, Loader2Icon, Trash2 } from "lucide-react"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { Link, useParams } from "react-router-dom"
 import { useNavigate } from "react-router-dom"
@@ -13,13 +13,12 @@ const TaskDetailsPage = () => {
   const { taskId } = useParams()
   const [task, setTask] = useState({})
   const [time, setTime] = useState("")
-  const titleRef = useRef()
-  const descriptionRef = useRef()
   const navigate = useNavigate()
   const {
     register,
     formState: { errors, isSubmitting },
     handleSubmit,
+    reset,
   } = useForm()
 
   useEffect(() => {
@@ -29,15 +28,16 @@ const TaskDetailsPage = () => {
       })
       const data = await response.json()
       setTask(data)
+      reset(data)
       setTime(data.time)
     }
     getTask()
-  }, [taskId])
+  }, [taskId, reset])
 
   const handleEditClick = async (data) => {
     // Lógica para salvar as alterações da tarefa
-    const title = data.title
-    const description = data.description
+    const title = data.title.trim() // Para nao ter espaços vazios ao salvar
+    const description = data.description.trim() // Para nao ter espaços vazios ao salvar
 
     const task = {
       title,
@@ -107,19 +107,24 @@ const TaskDetailsPage = () => {
             </Button>
           </div>
         </div>
-        <form onSubmit={handleSubmit(handleEditClick)} action="">
+        <form onSubmit={handleSubmit(handleEditClick)} action="POST">
           <div className="flex flex-col rounded-xl bg-white p-6">
             <div className="space-y-3">
               <Input
                 id="title"
                 label="Título"
-                ref={titleRef}
                 defaultValue={task?.title}
                 {...register("title", {
                   required: "Título é obrigatório",
                   min: {
                     value: 3,
                     message: "Título deve ter no mínimo 3 caracteres",
+                  },
+                  validate: (value) => {
+                    if (value.trim().length === 0) {
+                      return "Título não pode ser vazio"
+                    }
+                    return true
                   },
                 })}
                 errorMessage={errors.title?.message}
@@ -138,12 +143,17 @@ const TaskDetailsPage = () => {
                 id="description"
                 label="Descrição"
                 defaultValue={task?.description}
-                ref={descriptionRef}
                 {...register("description", {
                   required: "Descrição é obrigatório",
                   min: {
                     value: 3,
                     message: "Descrição deve ter no mínimo 3 caracteres",
+                  },
+                  validate: (value) => {
+                    if (value.trim().length === 0) {
+                      return "Descrição não pode ser vazia"
+                    }
+                    return true
                   },
                 })}
                 errorMessage={errors.description?.message}
