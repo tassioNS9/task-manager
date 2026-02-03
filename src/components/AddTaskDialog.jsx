@@ -1,5 +1,6 @@
 import "./AddTaskDialog.css"
 
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Loader2Icon } from "lucide-react"
 import PropTypes from "prop-types"
 import { useEffect, useRef, useState } from "react"
@@ -12,7 +13,25 @@ import { v4 } from "uuid"
 import Button from "./Button"
 import Input from "./Input"
 import TimeSelect from "./TimeSelect"
-const AddTaskDialog = ({ isOpen, handleClose, onAddTaskSucess }) => {
+const AddTaskDialog = ({ isOpen, handleClose }) => {
+  const queryClient = useQueryClient()
+  const { mutate } = useMutation({
+    mutationKey: "addTask",
+    mutationFn: async (newTask) => {
+      const response = await fetch("http://localhost:3000/tasks", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newTask),
+      })
+
+      if (!response.ok) {
+        throw new Error("Erro ao adicionar tarefa.")
+      }
+      return response.json()
+    },
+  })
   const [time, setTime] = useState("evening")
   const nodeRef = useRef()
   const {
@@ -42,23 +61,22 @@ const AddTaskDialog = ({ isOpen, handleClose, onAddTaskSucess }) => {
       time,
       status: "not_started",
     }
-    const response = await fetch("http://localhost:3000/tasks", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(task),
-    })
 
-    if (!response.ok) {
-      return toast.error("Erro ao adicionar tarefa.")
-    }
-    onAddTaskSucess(task)
-    handleClose()
-    reset({
-      title: "",
-      description: "",
-      time: "evening",
+    mutate(task, {
+      onSuccess: () => {
+        queryClient.setQueryData("tasks", (currentTasks) => {
+          return [...currentTasks, task]
+        })
+        handleClose()
+        reset({
+          title: "",
+          description: "",
+          time: "evening",
+        })
+      },
+      onError: () => {
+        toast.error("Erro ao adicionar tarefa.")
+      },
     })
   }
 
