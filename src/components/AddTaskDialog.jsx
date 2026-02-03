@@ -55,7 +55,11 @@ const AddTaskDialog = ({ isOpen, handleClose, onAddTaskSucess }) => {
     }
     onAddTaskSucess(task)
     handleClose()
-    reset()
+    reset({
+      title: "",
+      description: "",
+      time: "evening",
+    })
   }
 
   return (
@@ -73,7 +77,7 @@ const AddTaskDialog = ({ isOpen, handleClose, onAddTaskSucess }) => {
             className="fixed bottom-0 left-0 top-0 flex h-screen w-screen items-center justify-center backdrop-blur"
           >
             {/* DIALOG */}
-            <form onSubmit={handleSubmit(handleSaveClick)} action="">
+            <div>
               <div className="rounded-xl bg-white p-5 text-center shadow">
                 <h2 className="brand-dark-blue text-xl font-semibold">
                   Nova Tarefa
@@ -82,11 +86,16 @@ const AddTaskDialog = ({ isOpen, handleClose, onAddTaskSucess }) => {
                   Insira as informações abaixo
                 </p>
 
-                <div className="flex w-[336px] flex-col space-y-4">
+                <form
+                  onSubmit={handleSubmit(handleSaveClick)}
+                  className="flex w-[336px] flex-col space-y-4"
+                >
                   <Input
                     id="title"
                     label="Título"
                     placeholder="Insira o título da tarefa"
+                    errorMessage={errors?.title?.message}
+                    disabled={isSubmitting}
                     {...register("title", {
                       required: "Título é obrigatório",
                       minLength: {
@@ -100,8 +109,6 @@ const AddTaskDialog = ({ isOpen, handleClose, onAddTaskSucess }) => {
                         return true
                       },
                     })}
-                    errorMessage={errors?.title?.message}
-                    disabled={isSubmitting}
                   />
                   <TimeSelect
                     value={time}
@@ -113,6 +120,8 @@ const AddTaskDialog = ({ isOpen, handleClose, onAddTaskSucess }) => {
                     id="description"
                     label="Descrição"
                     placeholder="Descreva a Tarefa"
+                    errorMessage={errors?.description?.message}
+                    disabled={isSubmitting}
                     {...register("description", {
                       required: "Descrição é obrigatório",
                       minLength: {
@@ -126,8 +135,6 @@ const AddTaskDialog = ({ isOpen, handleClose, onAddTaskSucess }) => {
                         return true
                       },
                     })}
-                    errorMessage={errors?.description?.message}
-                    disabled={isSubmitting}
                   />
 
                   <div className="flex justify-center gap-4">
@@ -135,6 +142,7 @@ const AddTaskDialog = ({ isOpen, handleClose, onAddTaskSucess }) => {
                       color="secondary"
                       className="w-full justify-center"
                       size="large"
+                      type="button"
                       onClick={handleClose}
                     >
                       Cancelar
@@ -152,9 +160,9 @@ const AddTaskDialog = ({ isOpen, handleClose, onAddTaskSucess }) => {
                       </Button>
                     )}
                   </div>
-                </div>
+                </form>
               </div>
-            </form>
+            </div>
           </div>,
           document.body
         )}
