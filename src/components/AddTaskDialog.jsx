@@ -62,6 +62,16 @@ const AddTaskDialog = ({ isOpen, handleClose, onAddTaskSucess }) => {
     })
   }
 
+  const handleCloseClick = () => {
+    if (isSubmitting) return
+    reset({
+      title: "",
+      description: "",
+      time: "evening",
+    })
+    handleClose()
+  }
+
   return (
     <CSSTransition
       nodeRef={nodeRef}
@@ -143,7 +153,7 @@ const AddTaskDialog = ({ isOpen, handleClose, onAddTaskSucess }) => {
                       className="w-full justify-center"
                       size="large"
                       type="button"
-                      onClick={handleClose}
+                      onClick={handleCloseClick}
                     >
                       Cancelar
                     </Button>
