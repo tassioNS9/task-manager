@@ -20,16 +20,16 @@ const TaskItem = ({ task, handleTaskCheckboxClick }) => {
         method: "DELETE",
       })
       if (!response.ok) {
-        throw new Error("Erro ao Deletar a tarefa!.")
+        throw new Error("Erro ao Deletar a tarefa!")
       }
       return response.json()
     },
   })
 
-  const handleDeleteClick = async () => {
+  const handleDeleteClick = () => {
     mutate(undefined, {
       onSuccess: () => {
-        queryClient.setQueryData("tasks", (oldTasks) => {
+        queryClient.setQueryData(["tasks"], (oldTasks) => {
           return oldTasks.filter((oldTask) => oldTask.id !== task.id)
         })
         toast.success("Tarefa Deletada com Sucesso!")
@@ -101,7 +101,6 @@ TaskItem.propTypes = {
     status: PropTypes.oneOf(["not_started", "in_progress", "done"]).isRequired,
   }).isRequired,
   handleTaskCheckboxClick: PropTypes.func.isRequired,
-  onDeleteSucess: PropTypes.func.isRequired,
 }
 
 export default TaskItem

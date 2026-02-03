@@ -15,6 +15,7 @@ import Input from "./Input"
 import TimeSelect from "./TimeSelect"
 const AddTaskDialog = ({ isOpen, handleClose }) => {
   const queryClient = useQueryClient()
+
   const { mutate } = useMutation({
     mutationKey: "addTask",
     mutationFn: async (newTask) => {
@@ -64,9 +65,10 @@ const AddTaskDialog = ({ isOpen, handleClose }) => {
 
     mutate(task, {
       onSuccess: () => {
-        queryClient.setQueryData("tasks", (currentTasks) => {
+        queryClient.setQueryData(["tasks"], (currentTasks) => {
           return [...currentTasks, task]
         })
+        toast.success("Tarefa adicionada com SUcesso!")
         handleClose()
         reset({
           title: "",
@@ -75,7 +77,7 @@ const AddTaskDialog = ({ isOpen, handleClose }) => {
         })
       },
       onError: () => {
-        toast.error("Erro ao adicionar tarefa.")
+        toast.error("Erro ao adicionar tarefaaa.")
       },
     })
   }
@@ -202,7 +204,6 @@ const AddTaskDialog = ({ isOpen, handleClose }) => {
 AddTaskDialog.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
-  onAddTaskSucess: PropTypes.func.isRequired,
 }
 
 export default AddTaskDialog
