@@ -1,6 +1,5 @@
 import "./AddTaskDialog.css"
 
-import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Loader2Icon } from "lucide-react"
 import PropTypes from "prop-types"
 import { useRef } from "react"
@@ -10,29 +9,12 @@ import { CSSTransition } from "react-transition-group"
 import { toast } from "sonner"
 import { v4 } from "uuid"
 
+import { useAddTasks } from "../hooks/data/use-add-tasks"
 import Button from "./Button"
 import Input from "./Input"
 import TimeSelect from "./TimeSelect"
 const AddTaskDialog = ({ isOpen, handleClose }) => {
-  const queryClient = useQueryClient()
-
-  const { mutate } = useMutation({
-    mutationKey: "addTask",
-    mutationFn: async (newTask) => {
-      const response = await fetch("http://localhost:3000/tasks", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newTask),
-      })
-
-      if (!response.ok) {
-        throw new Error("Erro ao adicionar tarefa.")
-      }
-      return response.json()
-    },
-  })
+  const { mutate } = useAddTasks()
   const nodeRef = useRef()
   const {
     register,
@@ -58,9 +40,6 @@ const AddTaskDialog = ({ isOpen, handleClose }) => {
 
     mutate(task, {
       onSuccess: () => {
-        queryClient.setQueryData(["tasks"], (currentTasks) => {
-          return [...currentTasks, task]
-        })
         toast.success("Tarefa adicionada com SUcesso!")
         handleClose()
         reset({

@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { CircleArrowLeft, Loader2Icon, Trash2 } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { Link, useParams } from "react-router-dom"
@@ -9,6 +9,7 @@ import Button from "./components/Button"
 import Input from "./components/Input"
 import Sidebar from "./components/Sidebar"
 import TimeSelect from "./components/TimeSelect"
+import { useGetTasks } from "./hooks/data/use-get-tasks"
 const TaskDetailsPage = () => {
   const queryClient = useQueryClient()
   const { taskId } = useParams()
@@ -17,20 +18,9 @@ const TaskDetailsPage = () => {
     register,
     formState: { errors, isSubmitting },
     handleSubmit,
-    reset,
   } = useForm()
 
-  const { data: task } = useQuery({
-    queryKey: ["task", taskId],
-    queryFn: async () => {
-      const response = await fetch(`http://localhost:3000/tasks/${taskId}`, {
-        method: "GET",
-      })
-      const data = await response.json()
-      reset(data)
-      return data
-    },
-  })
+  const { data: task } = useGetTasks()
 
   const { mutate: updateTask, isPending } = useMutation({
     mutationKey: ["updateTask", taskId],
