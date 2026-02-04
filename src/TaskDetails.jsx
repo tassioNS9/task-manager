@@ -1,4 +1,3 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { CircleArrowLeft, Loader2Icon, Trash2 } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { Link, useParams } from "react-router-dom"
@@ -9,56 +8,24 @@ import Button from "./components/Button"
 import Input from "./components/Input"
 import Sidebar from "./components/Sidebar"
 import TimeSelect from "./components/TimeSelect"
-import { useGetTasks } from "./hooks/data/use-get-tasks"
+import { useDeleteTasks } from "./hooks/data/use-delete-tasks"
+import { useGetTask } from "./hooks/data/use-get-task"
+import { useUpdateTasks } from "./hooks/data/use-update-tasks"
 const TaskDetailsPage = () => {
-  const queryClient = useQueryClient()
   const { taskId } = useParams()
   const navigate = useNavigate()
   const {
     register,
     formState: { errors, isSubmitting },
     handleSubmit,
+    reset,
   } = useForm()
 
-  const { data: task } = useGetTasks()
+  const { data: task } = useGetTask(taskId, reset)
 
-  const { mutate: updateTask, isPending } = useMutation({
-    mutationKey: ["updateTask", taskId],
-    mutationFn: async (newTask) => {
-      const response = await fetch(`http://localhost:3000/tasks/${taskId}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newTask),
-      })
+  const { mutate: updateTask, isPending } = useUpdateTasks(taskId)
 
-      if (!response.ok) {
-        // Tratar erro
-        throw new Error()
-      }
-      const updateTask = await response.json()
-
-      return updateTask
-    },
-  })
-
-  const { mutate: deleteTask } = useMutation({
-    mutationKey: ["deleteTask", taskId],
-    mutationFn: async () => {
-      const response = await fetch(`http://localhost:3000/tasks/${taskId}`, {
-        method: "DELETE",
-      })
-      if (!response.ok) {
-        throw new Error()
-      }
-
-      queryClient.setQueryData(["tasks"], (oldTasks) => {
-        return oldTasks.filter((oldTask) => oldTask.id !== taskId)
-      })
-      return response.json()
-    },
-  })
+  const { mutate: deleteTask } = useDeleteTasks(taskId)
 
   const handleEditClick = async (data) => {
     // Lógica para salvar as alterações da tarefa
@@ -73,7 +40,6 @@ const TaskDetailsPage = () => {
 
     updateTask(task, {
       onSuccess: () => {
-        queryClient.refetchQueries(["tasks"]) // faz um refetch na lista de tarefas para atualizar os dados
         toast.success("Tarefa Atualizada com SUcesso!")
       },
       onError: () => {
@@ -83,7 +49,7 @@ const TaskDetailsPage = () => {
   }
 
   const handleDeleteClick = async () => {
-    deleteTask(task, {
+    deleteTask(undefined, {
       onSuccess: () => {
         toast.success("Tarefa Deletada com Sucesso!")
         navigate("/")
