@@ -42,7 +42,7 @@ const AddTaskDialog = ({ isOpen, handleClose }) => {
   } = useForm({
     defaultValues: {
       title: "",
-      time: "evening",
+      time: "morning",
       description: "",
     },
   })

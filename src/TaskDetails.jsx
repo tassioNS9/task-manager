@@ -28,6 +28,7 @@ const TaskDetailsPage = () => {
       })
       const data = await response.json()
       reset(data)
+      return data
     },
   })
 
@@ -47,14 +48,8 @@ const TaskDetailsPage = () => {
         throw new Error()
       }
       const updateTask = await response.json()
-      queryClient.setQueryData(["tasks"], (oldTasks) => {
-        return oldTasks.map((task) => {
-          if (task.id === taskId) {
-            return updateTask
-          }
-          return task
-        })
-      })
+
+      return updateTask
     },
   })
 
@@ -67,6 +62,10 @@ const TaskDetailsPage = () => {
       if (!response.ok) {
         throw new Error()
       }
+
+      queryClient.setQueryData(["tasks"], (oldTasks) => {
+        return oldTasks.filter((oldTask) => oldTask.id !== taskId)
+      })
       return response.json()
     },
   })
@@ -84,6 +83,7 @@ const TaskDetailsPage = () => {
 
     updateTask(task, {
       onSuccess: () => {
+        queryClient.refetchQueries(["tasks"]) // faz um refetch na lista de tarefas para atualizar os dados
         toast.success("Tarefa Atualizada com SUcesso!")
       },
       onError: () => {
@@ -137,7 +137,7 @@ const TaskDetailsPage = () => {
             </Button>
           </div>
         </div>
-        <form onSubmit={handleSubmit(handleEditClick)} action="PATCH">
+        <form onSubmit={handleSubmit(handleEditClick)}>
           <div className="flex flex-col rounded-xl bg-white p-6">
             <div className="space-y-3">
               <Input
@@ -156,7 +156,7 @@ const TaskDetailsPage = () => {
                     return true
                   },
                 })}
-                errorMessage={errors.title?.message}
+                errorMessage={errors?.title?.message}
               />
             </div>
             <div className="my-6 space-y-3">
@@ -189,7 +189,7 @@ const TaskDetailsPage = () => {
                     return true
                   },
                 })}
-                errorMessage={errors.description?.message}
+                errorMessage={errors?.description?.message}
               />
             </div>
           </div>
