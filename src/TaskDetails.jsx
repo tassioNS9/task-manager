@@ -1,5 +1,5 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { CircleArrowLeft, Loader2Icon, Trash2 } from "lucide-react"
-import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { Link, useParams } from "react-router-dom"
 import { useNavigate } from "react-router-dom"
@@ -10,9 +10,8 @@ import Input from "./components/Input"
 import Sidebar from "./components/Sidebar"
 import TimeSelect from "./components/TimeSelect"
 const TaskDetailsPage = () => {
+  const queryClient = useQueryClient()
   const { taskId } = useParams()
-  const [task, setTask] = useState({})
-  const [time, setTime] = useState("")
   const navigate = useNavigate()
   const {
     register,
@@ -21,58 +20,89 @@ const TaskDetailsPage = () => {
     reset,
   } = useForm()
 
-  useEffect(() => {
-    const getTask = async () => {
+  const { data: task } = useQuery({
+    queryKey: ["task", taskId],
+    queryFn: async () => {
       const response = await fetch(`http://localhost:3000/tasks/${taskId}`, {
         method: "GET",
       })
       const data = await response.json()
-      setTask(data)
       reset(data)
-      setTime(data.time)
-    }
-    getTask()
-  }, [taskId, reset])
+    },
+  })
+
+  const { mutate: updateTask, isPending } = useMutation({
+    mutationKey: ["updateTask", taskId],
+    mutationFn: async (newTask) => {
+      const response = await fetch(`http://localhost:3000/tasks/${taskId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newTask),
+      })
+
+      if (!response.ok) {
+        // Tratar erro
+        throw new Error()
+      }
+      const updateTask = await response.json()
+      queryClient.setQueryData(["tasks"], (oldTasks) => {
+        return oldTasks.map((task) => {
+          if (task.id === taskId) {
+            return updateTask
+          }
+          return task
+        })
+      })
+    },
+  })
+
+  const { mutate: deleteTask } = useMutation({
+    mutationKey: ["deleteTask", taskId],
+    mutationFn: async () => {
+      const response = await fetch(`http://localhost:3000/tasks/${taskId}`, {
+        method: "DELETE",
+      })
+      if (!response.ok) {
+        throw new Error()
+      }
+      return response.json()
+    },
+  })
 
   const handleEditClick = async (data) => {
     // Lógica para salvar as alterações da tarefa
     const title = data.title.trim() // Para nao ter espaços vazios ao salvar
     const description = data.description.trim() // Para nao ter espaços vazios ao salvar
-
+    const time = data.time
     const task = {
       title,
       description,
       time,
     }
-    console.log(task, "task")
-    const response = await fetch(`http://localhost:3000/tasks/${taskId}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(task),
-    })
 
-    if (!response.ok) {
-      // Tratar erro
-      return toast.error("Erro ao atualizar a tarefa.")
-    }
-    const updatedTask = await response.json()
-    setTask(updatedTask)
-    // Talvez mostrar uma notificação de sucesso
-    toast.success("Tarefa atualizada com sucesso!")
+    updateTask(task, {
+      onSuccess: () => {
+        toast.success("Tarefa Atualizada com SUcesso!")
+      },
+      onError: () => {
+        toast.error("Erro ao Atualizar a tarefaa.")
+      },
+    })
   }
 
   const handleDeleteClick = async () => {
-    const response = await fetch(`http://localhost:3000/tasks/${taskId}`, {
-      method: "DELETE",
+    deleteTask(task, {
+      onSuccess: () => {
+        toast.success("Tarefa Deletada com Sucesso!")
+        navigate("/")
+      },
+      onError: () => {
+        toast.error("Erro ao Deletar a tarefa!.")
+      },
     })
-    if (!response.ok) {
-      return toast.error("Erro ao Deletar a tarefa!.")
-    }
 
-    toast.success("Tarefa Deletada com Sucesso!")
-    navigate("/")
     // Redirecionar para a página principal ou outra página
   }
 
@@ -107,13 +137,12 @@ const TaskDetailsPage = () => {
             </Button>
           </div>
         </div>
-        <form onSubmit={handleSubmit(handleEditClick)} action="POST">
+        <form onSubmit={handleSubmit(handleEditClick)} action="PATCH">
           <div className="flex flex-col rounded-xl bg-white p-6">
             <div className="space-y-3">
               <Input
                 id="title"
                 label="Título"
-                defaultValue={task?.title}
                 {...register("title", {
                   required: "Título é obrigatório",
                   min: {
@@ -134,15 +163,19 @@ const TaskDetailsPage = () => {
               <TimeSelect
                 id="time"
                 label="Horário"
-                value={time}
-                onChange={(e) => setTime(e.target.value)}
+                {...register("time", {
+                  required: "Horário é obrigatório",
+                  min: {
+                    value: 3,
+                    message: "Horário deve ter no mínimo 3 caracteres",
+                  },
+                })}
               />
             </div>
             <div className="space-y-3">
               <Input
                 id="description"
                 label="Descrição"
-                defaultValue={task?.description}
                 {...register("description", {
                   required: "Descrição é obrigatório",
                   min: {
@@ -163,12 +196,12 @@ const TaskDetailsPage = () => {
 
           <div className="flex justify-end gap-3 py-3">
             <Button
-              disabled={isSubmitting}
+              disabled={isPending}
               type="submit"
               size="large"
               color="primary"
             >
-              {isSubmitting ? (
+              {isPending ? (
                 <Loader2Icon className="animate-spin text-brand-text-gray" />
               ) : (
                 "Salvar"

@@ -3,7 +3,7 @@ import "./AddTaskDialog.css"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Loader2Icon } from "lucide-react"
 import PropTypes from "prop-types"
-import { useEffect, useRef, useState } from "react"
+import { useRef } from "react"
 import { createPortal } from "react-dom"
 import { useForm } from "react-hook-form"
 import { CSSTransition } from "react-transition-group"
@@ -33,7 +33,6 @@ const AddTaskDialog = ({ isOpen, handleClose }) => {
       return response.json()
     },
   })
-  const [time, setTime] = useState("evening")
   const nodeRef = useRef()
   const {
     register,
@@ -48,18 +47,12 @@ const AddTaskDialog = ({ isOpen, handleClose }) => {
     },
   })
 
-  useEffect(() => {
-    if (!isOpen) {
-      setTime("evening")
-    }
-  }, [isOpen])
-
   const handleSaveClick = async (data) => {
     const task = {
       id: v4(),
       title: data.title.trim(),
       description: data.description.trim(),
-      time,
+      time: data.time,
       status: "not_started",
     }
 
@@ -141,9 +134,16 @@ const AddTaskDialog = ({ isOpen, handleClose }) => {
                     })}
                   />
                   <TimeSelect
-                    value={time}
-                    onChange={(e) => setTime(e.target.value)}
+                    id="time"
+                    label="Horário"
                     disabled={isSubmitting}
+                    {...register("time", {
+                      required: "Horário é obrigatório",
+                      minLength: {
+                        value: 3,
+                        message: "Horário deve ter no mínimo 3 caracteres",
+                      },
+                    })}
                   />
 
                   <Input
