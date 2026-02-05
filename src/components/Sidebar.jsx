@@ -4,9 +4,9 @@ import { ListChecks } from "lucide-react"
 import SidebarItem from "./SidebarItem"
 const Sidebar = () => {
   return (
-    <div className="h-screen w-72 bg-white">
+    <div className="h-screen w-72 min-w-72 bg-white">
       <div className="space-y-4 px-8 py-6">
-        <h1 className="text-brand-primary text-xl font-semibold">
+        <h1 className="text-xl font-semibold text-brand-primary">
           Task Manager
         </h1>
         <p>
@@ -15,11 +15,11 @@ const Sidebar = () => {
         </p>
       </div>
       <div className="flex flex-col gap-2 px-2">
-        <SidebarItem color="selected" href="#">
+        <SidebarItem color="selected" href="/">
           <House />
           Inicio
         </SidebarItem>
-        <SidebarItem color="unselected" href="#">
+        <SidebarItem color="unselected" href="/tasks">
           <ListChecks />
           Minhas tarefas
         </SidebarItem>
