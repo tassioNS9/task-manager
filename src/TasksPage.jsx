@@ -1,7 +1,7 @@
 import Sidebar from "./components/Sidebar"
 import Tasks from "./components/Tasks"
 
-function App() {
+function TasksPage() {
   return (
     <div className="flex">
       <Sidebar />
@@ -10,4 +10,4 @@ function App() {
   )
 }
 
-export default App
+export default TasksPage

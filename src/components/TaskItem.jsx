@@ -5,28 +5,45 @@ import {
   Trash2,
 } from "lucide-react"
 import PropTypes from "prop-types"
-import { useState } from "react"
 import { Link } from "react-router-dom"
 import { toast } from "sonner"
 
+import { useDeleteTasks } from "../hooks/data/use-delete-tasks"
+import { useUpdateTasks } from "../hooks/data/use-update-tasks"
 import Button from "./Button"
 
-const TaskItem = ({ task, handleTaskCheckboxClick, onDeleteSucess }) => {
-  const [deleteIsLoading, setDeleteIsLoading] = useState(false)
-
-  const handleDeleteClick = async () => {
-    setDeleteIsLoading(true)
-    const response = await fetch(`http://localhost:3000/tasks/${task.id}`, {
-      method: "DELETE",
+const TaskItem = ({ task }) => {
+  const { mutate, isPending } = useDeleteTasks(task.id)
+  const { mutate: updateTask } = useUpdateTasks(task.id)
+  const handleDeleteClick = () => {
+    mutate(undefined, {
+      onSuccess: () => {
+        toast.success("Tarefa Deletada com Sucesso!")
+      },
+      onError: () => {
+        toast.error("Erro ao Deletar a tarefa!.")
+      },
     })
-    if (!response.ok) {
-      setDeleteIsLoading(false)
-      return toast.error("Erro ao Deletar a tarefa!.")
-    }
+  }
 
-    toast.success("Tarefa Deletada com Sucesso!")
-    onDeleteSucess(task.id)
-    setDeleteIsLoading(false)
+  const getStatus = () => {
+    if (task.status === "not_started") {
+      return "in_progress"
+    }
+    if (task.status === "in_progress") {
+      return "done"
+    }
+    return "not_started"
+  }
+
+  const handleTaskCheckboxClick = () => {
+    updateTask(
+      { status: getStatus() },
+      {
+        onSuccess: () => toast.success("Status da Tarefa Atualizado!"),
+        onError: () => toast.error("Error ao atualizar Status!"),
+      }
+    )
   }
 
   const getStatusClasses = () => {
@@ -52,22 +69,18 @@ const TaskItem = ({ task, handleTaskCheckboxClick, onDeleteSucess }) => {
             type="checkbox"
             checked={task.status === "done"}
             className="absolute h-full w-full cursor-pointer opacity-0"
-            onChange={() => handleTaskCheckboxClick(task?.id)}
+            onChange={handleTaskCheckboxClick}
           />
           {task.status === "done" && <CheckIcon className="text-white" />}
           {task.status === "in_progress" && (
             <Loader2Icon className="animate-spin text-white" />
           )}
         </label>
-        <p className="">{task.title}</p>
+        <p>{task.title}</p>
       </div>
       <div className="flex items-center">
-        <Button
-          onClick={handleDeleteClick}
-          color="ghost"
-          disabled={deleteIsLoading}
-        >
-          {deleteIsLoading ? (
+        <Button onClick={handleDeleteClick} color="ghost" disabled={isPending}>
+          {isPending ? (
             <Loader2Icon className="animate-spin text-brand-text-gray" />
           ) : (
             <Trash2 />
@@ -93,8 +106,6 @@ TaskItem.propTypes = {
     time: PropTypes.oneOf(["morning", "afternoon", "evening"]).isRequired,
     status: PropTypes.oneOf(["not_started", "in_progress", "done"]).isRequired,
   }).isRequired,
-  handleTaskCheckboxClick: PropTypes.func.isRequired,
-  onDeleteSucess: PropTypes.func.isRequired,
 }
 
 export default TaskItem
