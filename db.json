@@ -26,14 +26,21 @@
       "title": "testandooo",
       "description": "wefcwef",
       "time": "afternoon",
-      "status": "not_started"
+      "status": "in_progress"
     },
     {
       "id": "c665a89a-ad99-453a-afd9-0c71c6de96f0",
-      "title": "Nova tarefa",
+      "title": "Nova tarefa 2",
       "description": "nova agoraaa",
       "time": "morning",
-      "status": "not_started"
+      "status": "done"
+    },
+    {
+      "id": "7a12bda2-d058-4c40-a7be-8a37b164512c",
+      "title": "Nova tarefa22",
+      "description": "ewrcfwervrew",
+      "time": "morning",
+      "status": "in_progress"
     }
   ]
 }

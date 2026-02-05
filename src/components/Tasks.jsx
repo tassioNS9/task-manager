@@ -1,47 +1,14 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { CloudSun, Moon, Sun } from "lucide-react"
 
-import { taskQueryKeys } from "../keys/queries"
+import { useGetTasks } from "../hooks/data/use-get-tasks"
 import Header from "./Header"
 import TaskItem from "./TaskItem"
 import TaskSepator from "./TaskSepator"
 const Tasks = () => {
-  const queryClient = useQueryClient()
-  const { data: tasks } = useQuery({
-    queryKey: ["tasks"],
-    queryFn: async () => {
-      const response = await fetch("http://localhost:3000/tasks", {
-        method: "GET",
-      })
-      const tasks = await response.json()
-      return tasks
-    },
-  })
+  const { data: tasks } = useGetTasks()
   const tasksMorning = tasks?.filter((task) => task.time === "morning")
   const taskAfternoon = tasks?.filter((task) => task.time === "afternoon")
   const tasksEvening = tasks?.filter((task) => task.time === "evening")
-
-  const handleTaskCheckboxClick = (taskId) => {
-    const newTasks = tasks.map((task) => {
-      if (task.id !== taskId) {
-        return task
-      }
-      if (task.status === "not_started") {
-        return { ...task, status: "in_progress" }
-      }
-
-      if (task.status === "in_progress") {
-        return { ...task, status: "done" }
-      }
-
-      if (task.status === "done") {
-        return { ...task, status: "not_started" }
-      }
-
-      return task
-    })
-    queryClient.setQueryData(taskQueryKeys.getAll(), newTasks)
-  }
 
   return (
     <div className="w-full space-y-2 px-8 py-16">
@@ -55,11 +22,7 @@ const Tasks = () => {
             </p>
           )}
           {tasksMorning?.map((task) => (
-            <TaskItem
-              key={task.id}
-              task={task}
-              handleTaskCheckboxClick={handleTaskCheckboxClick}
-            />
+            <TaskItem key={task.id} task={task} />
           ))}
         </div>
         <div className="my-6 space-y-3">
@@ -70,11 +33,7 @@ const Tasks = () => {
             </p>
           )}
           {taskAfternoon?.map((task) => (
-            <TaskItem
-              key={task.id}
-              task={task}
-              handleTaskCheckboxClick={handleTaskCheckboxClick}
-            />
+            <TaskItem key={task.id} task={task} />
           ))}
         </div>
         <div className="space-y-3">
@@ -85,11 +44,7 @@ const Tasks = () => {
             </p>
           )}
           {tasksEvening?.map((task) => (
-            <TaskItem
-              key={task.id}
-              task={task}
-              handleTaskCheckboxClick={handleTaskCheckboxClick}
-            />
+            <TaskItem key={task.id} task={task} />
           ))}
         </div>
       </div>
