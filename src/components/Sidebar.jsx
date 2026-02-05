@@ -15,11 +15,11 @@ const Sidebar = () => {
         </p>
       </div>
       <div className="flex flex-col gap-2 px-2">
-        <SidebarItem color="selected" href="/">
+        <SidebarItem to="/">
           <House />
           Inicio
         </SidebarItem>
-        <SidebarItem color="unselected" href="/tasks">
+        <SidebarItem to="/tasks">
           <ListChecks />
           Minhas tarefas
         </SidebarItem>

@@ -1,11 +1,12 @@
 import PropTypes from "prop-types"
+import { NavLink } from "react-router-dom"
 import { tv } from "tailwind-variants"
-const SidebarItem = ({ children, color, href }) => {
+const SidebarItem = ({ children, to }) => {
   const sidebar = tv({
-    base: `hover:text-brand-primary flex items-center gap-2 rounded px-4 py-2 hover:bg-opacity-15`,
+    base: `flex items-center gap-2 rounded px-4 py-2 hover:bg-opacity-15 hover:text-brand-primary`,
     variants: {
       color: {
-        unselected: "bg-brand-primary text-brand-primary bg-opacity-15",
+        unselected: "bg-brand-primary bg-opacity-15 text-brand-primary",
         selected: "text-brand-dark-blue",
       },
     },
@@ -15,16 +16,20 @@ const SidebarItem = ({ children, color, href }) => {
   })
 
   return (
-    <a className={sidebar({ color })} href={href}>
+    <NavLink
+      to={to}
+      className={({ isActive }) =>
+        sidebar({ color: isActive ? "unselected" : "selected" })
+      }
+    >
       {children}
-    </a>
+    </NavLink>
   )
 }
 
 SidebarItem.propTypes = {
   children: PropTypes.node.isRequired,
-  color: PropTypes.oneOf(["selected", "unselected"]),
-  href: PropTypes.string.isRequired,
+  to: PropTypes.string.isRequired,
 }
 
 export default SidebarItem
