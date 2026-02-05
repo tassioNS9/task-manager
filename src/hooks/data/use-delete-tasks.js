@@ -7,7 +7,7 @@ export const useDeleteTasks = (taskId) => {
   return useMutation({
     mutationKey: ["deleteTask", taskId],
     mutationFn: async () => {
-      const { data: deletedTask } = await api.patch(`/tasks/${taskId}`)
+      const { data: deletedTask } = await api.delete(`/tasks/${taskId}`)
 
       return deletedTask
     },
